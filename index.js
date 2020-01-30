@@ -1,30 +1,25 @@
 const axios = require("axios");
-const bra_id = "A2E4A385-43AC-E511-80D4-E4115BDFF975";
-const AuthStr = "Bearer ".concat(process.env.apiToken);
-
 const Discord = require("discord.js");
-const token = process.env.token;
-
 const client = new Discord.Client();
+import {channel_id,bra_id,AuthStr,token} from "./config"
 
-//client.once("ready", () => {
-//console.log('Ready!')
-//});
-
-async function getUser(message) {
+async function Verify(message) {
   try {
     const response = await axios.get(
       `https://api.guildwars2.com/v2/guild/${bra_id}/members`,
       { headers: { Authorization: AuthStr } }
     );
-
     for (var i = 0; i < response.data.length; i++) {
       if (response.data[i].name == message.content) {
-        //console.log(response.data[i].name)
+     
+        //add role
         var role = message.guild.roles.find(role => role.name === "Cadete");
         message.member.addRole(role);
-        //console.log("hihi")
-        client.channels.get(`565607843139420169`).send(`Verificado!`);
+
+        //set nickname
+        var nickname = message.member.nickname + "-" + message.content;
+        message.member.setNickname(nickname);
+        message.reply('Verificado!')
       }
     }
   } catch (error) {
@@ -32,9 +27,19 @@ async function getUser(message) {
   }
 }
 
+function Verified(message) {
+  var tag = false;
+  message.member.roles.find(role => {
+    if (role.position > 0) tag = true;
+  });
+  return tag;
+}
+
 client.on("message", message => {
-  if (message.channel.id === "565607843139420169" && message.content) {
-    getUser(message);
+  var re = new RegExp("\\w+\\.\\w+");
+  if (message.channel.id === channel_id && !message.author.bot && re.test(message.content)) {
+    if (Verified(message)) message.reply("ja verificado!");
+    else Verify(message);
   }
 });
 
