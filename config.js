@@ -1,9 +1,9 @@
 var config = {};
 
-config.bra_id = "A2E4A385-43AC-E511-80D4-E4115BDFF975";
+config.guild_id = '';
 config.channel_id= "565607843139420169";
-config.token = process.env.token;
-config.AuthStr = "Bearer ".concat(process.env.apiToken);
+config.token = process.env.token;//discord dev token
+config.AuthStr = "Bearer ".concat(process.env.apiToken);//game apitoken
 config.prefix="!";
 config.server_id ="438099048096989192";
 
